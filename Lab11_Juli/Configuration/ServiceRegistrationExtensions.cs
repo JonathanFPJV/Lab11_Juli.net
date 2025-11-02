@@ -6,6 +6,7 @@ public static class ServiceRegistrationExtensions
 {
     public static IServiceCollection AddApiServices(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         // Habilitar controladores de la API
         services.AddControllers();
         // Registra HttpContextAccessor (común para obtener info del request)
