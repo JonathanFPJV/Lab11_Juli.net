@@ -1,3 +1,4 @@
+using Lab11_Juli.Application.MediatR;
 using Microsoft.OpenApi.Models;
 
 namespace Lab11_Juli.Configuration;
@@ -50,6 +51,11 @@ public static class ServiceRegistrationExtensions
                 }
             });
         });
+        
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(
+            typeof(ApplicationAssemblyMarker).Assembly
+        ));
+        
         return services;
     }
 }
