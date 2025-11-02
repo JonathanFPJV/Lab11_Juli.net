@@ -7,7 +7,7 @@ namespace Lab11_Juli.Infrastructure.Configuration;
 
 public static class InfrastructureServicesExtensions
 {
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, 
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services,
         IConfiguration configuration)
     {
         // 1. Conexión a la Base de Datos
