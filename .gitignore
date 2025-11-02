@@ -1,0 +1,11 @@
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+Logs/
+TestResults/
+*.cache
+*.config.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
