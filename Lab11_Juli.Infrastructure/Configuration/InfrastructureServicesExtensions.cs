@@ -1,3 +1,5 @@
+using Lab11_Juli.Domain.Ports.Repositories;
+using Lab11_Juli.Infrastructure.Adapters.Respositories;
 using Lab11_Juli.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +18,11 @@ public static class InfrastructureServicesExtensions
             var connectionString = configuration.GetConnectionString("DefaultConnection"); 
             options.UseNpgsql(connectionString);
         }); 
+        //unitofwork
+        services.AddTransient<IUnitOfWork, UnitOfWork>();
         return services;
     }
+    
+    
+
 }
