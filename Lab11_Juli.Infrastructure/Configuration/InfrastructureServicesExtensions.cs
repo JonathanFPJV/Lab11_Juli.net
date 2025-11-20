@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 
 namespace Lab11_Juli.Infrastructure.Configuration;
 
@@ -18,21 +19,57 @@ public static class InfrastructureServicesExtensions
         // 1. Conexión a la Base de Datos
         services.AddDbContext<TicketerabdContext>((serviceProvider, options) =>
         {
-            // PASO A: Intentar leer la variable de entorno del sistema operativo (Render)
-            // Usamos una variable simple sin jerarquías complejas
+            // 1. Intentamos leer la variable de entorno DIRECTAMENTE (Bypass de IConfiguration)
             var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION");
 
-            // PASO B: Si está vacía (significa que estamos en Local), leemos del appsettings.json
+            // 2. Si está vacía, intentamos leer la variable estándar de Render (a veces Render usa esta)
             if (string.IsNullOrEmpty(connectionString))
             {
-                connectionString = configuration.GetConnectionString("DefaultConnection");
+                connectionString = Environment.GetEnvironmentVariable("DATABASE_URL");
             }
 
-            // Opcional: Imprimir en consola para depurar si falla (solo verás esto en los logs de Render)
+            // 3. Si sigue vacía, usamos la del archivo JSON (Solo para Local)
             if (string.IsNullOrEmpty(connectionString))
             {
-                Console.WriteLine("ERROR CRÍTICO: No se encontró ninguna cadena de conexión.");
+                Console.WriteLine("⚠️ ALERTA: Usando configuración local (appsettings.json)");
+                connectionString = configuration.GetConnectionString("DefaultConnection");
             }
+            else 
+            {
+                Console.WriteLine("✅ ÉXITO: Usando configuración de Variable de Entorno");
+                
+                // PARSEO IMPORTANTE:
+                // Si la URL viene con formato 'postgres://' (Render), a veces Npgsql la prefiere convertida.
+                // Este bloque convierte la URL de Render a un formato de conexión estándar de ADO.NET
+                try 
+                {
+                    var databaseUri = new Uri(connectionString);
+                    if (databaseUri.Scheme == "postgres") // Solo si es formato URL
+                    {
+                        var userInfo = databaseUri.UserInfo.Split(':');
+                        var builder = new NpgsqlConnectionStringBuilder
+                        {
+                            Host = databaseUri.Host,
+                            Port = databaseUri.Port,
+                            Username = userInfo[0],
+                            Password = userInfo[1],
+                            Database = databaseUri.LocalPath.TrimStart('/'),
+                            SslMode = SslMode.Require, // Render exige SSL
+                            TrustServerCertificate = true // Para evitar errores de certificados en la nube
+                        };
+                        connectionString = builder.ToString();
+                        Console.WriteLine("🔄 URL convertida a ConnectionString exitosamente.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Si falla el parseo, usamos el string original, quizás ya venía bien
+                    Console.WriteLine($"⚠️ No se pudo parsear la URI, usando string original: {ex.Message}");
+                }
+            }
+
+            // Log de seguridad (Muestra el Host pero oculta la contraseña)
+            Console.WriteLine($"🔌 Intentando conectar a: {connectionString?.Split("Password")[0]}...");
 
             options.UseNpgsql(connectionString);
         });
