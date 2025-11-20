@@ -6,13 +6,13 @@ using MediatR;
 
 namespace Lab11_Juli.Application.UsesCases.RoleUseCases.Queries;
 
-public record GetRolesQuery(): IRequest<List<Role>>;
+public record GetRolesQuery(): IRequest<List<RoleGetDto>>;
 
-internal sealed class GetRolesQueryHandler (IUnitOfWork unitOfWork) : IRequestHandler<GetRolesQuery, List<Role>>
+internal sealed class GetRolesQueryHandler (IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<GetRolesQuery, List<RoleGetDto>>
 {
-    public async Task<List<Role>> Handle(GetRolesQuery request, CancellationToken cancellationToken)
+    public async Task<List<RoleGetDto>> Handle(GetRolesQuery request, CancellationToken cancellationToken)
     {
         var data = await unitOfWork.Repository<Role>().GetAll();
-        return data;
+        return mapper.Map<List<RoleGetDto>>(data) ;
     }
 }

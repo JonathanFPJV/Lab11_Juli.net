@@ -10,6 +10,10 @@
     <PackageReference Include="MediatR" Version="13.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="UsesCases\UserUseCases\Queries\" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>

@@ -1,6 +1,9 @@
 using Lab11_Juli.Domain.Ports.Repositories;
+using Lab11_Juli.Domain.Ports.Services;
 using Lab11_Juli.Infrastructure.Adapters.Respositories;
+using Lab11_Juli.Infrastructure.Adapters.Security;
 using Lab11_Juli.Infrastructure.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +23,8 @@ public static class InfrastructureServicesExtensions
         }); 
         //unitofwork
         services.AddTransient<IUnitOfWork, UnitOfWork>();
+        services.AddSingleton<IPasswordHasher, PasswordHasher>();
+        services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         return services;
     }
     

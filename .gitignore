@@ -9,3 +9,41 @@ TestResults/
 *.user
 *.userosscache
 *.sln.docstates
+.config/
+*.user
+*.userosscache
+*.sln.docstates
+
+# Archivos de log y temporales
+*.log
+*.tmp
+
+# --- JetBrains Rider / IntelliJ IDEA ---
+# Carpeta de configuración del IDE (IMPORTANTE para Rider)
+.idea/
+*.sln.iml
+*.csproj.user
+
+# --- Visual Studio (por si alguien más abre el proyecto con VS) ---
+.vs/
+*.suo
+*.userprefs
+
+# --- Configuración de entorno y secretos ---
+# Ignorar configuraciones de desarrollo para no subir secretos o rutas locales
+appsettings.Development.json
+appsettings.Local.json
+appsettings.json
+.env
+
+# --- Archivos del Sistema Operativo ---
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Mac (por si acaso colaboras con alguien en Mac)
+.DS_Store
+
+# --- Publicación ---
+# Ignorar carpetas de salida de publicación manual (como la que configuraste)
+publish/
