@@ -20,13 +20,13 @@ var app = builder.Build();
 
 // --- Configuración del Pipeline (Middleware) ---
 
-if (app.Environment.IsDevelopment())
+
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", name: "Lab10 - Juli V1");
-        c.RoutePrefix = string.Empty; 
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", name: "Lab11 - Juli V1");
+        c.RoutePrefix = string.Empty; // Esto hace que Swagger abra en la raíz (midominio.com/)
     });
 }
 

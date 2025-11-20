@@ -16,11 +16,26 @@ public static class InfrastructureServicesExtensions
         IConfiguration configuration)
     {
         // 1. Conexión a la Base de Datos
-        services.AddDbContext<TicketerabdContext>((IServiceProvider, options) =>
+        services.AddDbContext<TicketerabdContext>((serviceProvider, options) =>
         {
-            var connectionString = configuration.GetConnectionString("DefaultConnection"); 
+            // PASO A: Intentar leer la variable de entorno del sistema operativo (Render)
+            // Usamos una variable simple sin jerarquías complejas
+            var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION");
+
+            // PASO B: Si está vacía (significa que estamos en Local), leemos del appsettings.json
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                connectionString = configuration.GetConnectionString("DefaultConnection");
+            }
+
+            // Opcional: Imprimir en consola para depurar si falla (solo verás esto en los logs de Render)
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                Console.WriteLine("ERROR CRÍTICO: No se encontró ninguna cadena de conexión.");
+            }
+
             options.UseNpgsql(connectionString);
-        }); 
+        });
         //unitofwork
         services.AddTransient<IUnitOfWork, UnitOfWork>();
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
